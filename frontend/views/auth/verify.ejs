@@ -1,0 +1,13 @@
+<%- include("../partials/header", { title: "Verify Email" }) %>
+
+<form action="/api/auth/verify-otp" method="POST" class="max-w-md mx-auto space-y-4">
+  <h2 class="text-2xl font-bold">Email Verification</h2>
+
+  <input type="email" name="email" placeholder="Email"
+    class="w-full p-3 rounded bg-gray-200 dark:bg-gray-700" required>
+
+  <input type="text" name="otp" placeholder="Enter OTP"
+    class="w-full p-3 rounded bg-gray-200 dark:bg-gray-700" required>
+
+  <button class="bg-green-600 text-white px-4 py-2 rounded">Verify</button>
+</form>

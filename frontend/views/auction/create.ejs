@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell an Item - AuctionHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+
+    <%- include("../partials/header") %>
+
+    <div class="container mx-auto px-6 py-12">
+        <div class="max-w-3xl mx-auto bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-700">
+            
+            <h1 class="text-3xl font-bold mb-8 text-center border-b border-gray-700 pb-4">
+                🔨 Create New Auction
+            </h1>
+
+            <form action="/api/auction/create" method="POST" enctype="multipart/form-data" class="space-y-6">
+                
+                <div>
+                    <label class="block text-sm font-bold mb-2 text-gray-300">Item Name</label>
+                    <input type="text" name="title" required 
+                           class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500"
+                           placeholder="e.g. Samsung S24 Ultra">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold mb-2 text-gray-300">Description</label>
+                    <textarea name="description" required rows="4"
+                              class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500"
+                              placeholder="Describe the condition, features, etc."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold mb-2 text-gray-300">Starting Price (৳)</label>
+                    <input type="number" name="startPrice" required 
+                           class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500"
+                           placeholder="5000">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-gray-300">Start Time</label>
+                        <input type="datetime-local" name="startTime" required 
+                               class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-gray-300">End Time</label>
+                        <input type="datetime-local" name="endTime" required 
+                               class="w-full p-3 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold mb-2 text-gray-300">Upload Image</label>
+                    <input type="file" name="image" required accept="image/*" 
+                           class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-4 rounded-lg transition transform active:scale-95 shadow-lg text-lg">
+                    🚀 Launch Auction
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

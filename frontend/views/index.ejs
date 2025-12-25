@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuctionHub - Bid, Win, Own</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans flex flex-col min-h-screen">
+
+    <%- include("partials/header") %>
+
+    <header class="bg-gray-800 border-b border-gray-700 py-20">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-4 tracking-tight">
+                Bid, Win, and Own with <span class="text-blue-500">Confidence!</span>
+            </h1>
+            <p class="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">
+                Bangladesh's most trusted online auction marketplace. Secure, transparent, and real-time bidding on premium items.
+            </p>
+            
+            <div class="flex justify-center gap-4">
+                <a href="/select-role" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-8 py-3 rounded-lg shadow-lg transition transform hover:scale-105">
+                    Start Bidding
+                </a>
+                <a href="/api/auction/create" class="bg-transparent border-2 border-gray-500 hover:border-white text-white font-bold px-8 py-3 rounded-lg transition">
+                    Sell an Item
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-6 py-16">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-white mb-2">🔥 Featured Live Auctions</h2>
+            <p class="text-gray-400">Be the first to bid on these hot items ending soon.</p>
+        </div>
+
+        <% 
+            const liveAuctions = auctions.filter(auction => new Date(auction.endTime) > new Date());
+        %>
+
+        <% if(liveAuctions.length === 0) { %>
+            <div class="bg-gray-800 p-10 rounded-lg text-center border border-gray-700 max-w-2xl mx-auto shadow-lg">
+                <p class="text-gray-400 text-xl mb-4">No active auctions right now.</p>
+                <a href="/api/auction/create" class="text-blue-400 hover:text-blue-300 font-bold underline">
+                    Be the first to list an item!
+                </a>
+            </div>
+        <% } else { %>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <% liveAuctions.forEach(auction => { %>
+                    <div class="bg-gray-800 rounded-xl shadow-lg border border-gray-700 overflow-hidden hover:shadow-2xl hover:border-gray-600 transition duration-300 flex flex-col">
+                        
+                        <div class="h-56 bg-white p-4 flex items-center justify-center relative">
+                            <span class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow animate-pulse">
+                                LIVE
+                            </span>
+                            <% if(auction.image) { %>
+                                <img src="/uploads/<%= auction.image %>" class="max-h-full max-w-full object-contain hover:scale-110 transition duration-500">
+                            <% } else { %>
+                                <div class="text-gray-400">No Image</div>
+                            <% } %>
+                        </div>
+
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-white mb-1"><%= auction.title %></h3>
+                            
+                            <% 
+                               const timeLeft = new Date(auction.endTime) - new Date();
+                               const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                               const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            %>
+                            <p class="text-sm text-yellow-500 font-bold mb-4">
+                                ⏳ Ends in: <%= days > 0 ? days + "d " : "" %><%= hours %>h
+                            </p>
+                            
+                            <div class="mt-auto">
+                                <div class="flex justify-between items-center mb-4">
+                                    <span class="text-gray-400 text-sm">Current Bid</span>
+                                    <span class="text-2xl font-bold text-green-400">৳<%= auction.currentPrice %></span>
+                                </div>
+                                <a href="/api/auction/<%= auction.id %>" class="block w-full bg-blue-600 hover:bg-blue-500 text-white text-center font-bold py-3 rounded-lg transition shadow-md">
+                                    Bid Now 🔨
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </main>
+
+    <footer class="bg-gray-800 border-t border-gray-700 mt-auto">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <h3 class="text-xl font-bold text-white mb-2">Government & Charity Auctions</h3>
+            <p class="text-gray-400 text-sm mb-6">Verified and transparent auctions for government and charitable causes.</p>
+            <p class="text-gray-500 text-xs">&copy; <%= new Date().getFullYear() %> AuctionHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

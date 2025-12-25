@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= auction.title %> - AuctionHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+
+    <%- include("../partials/header") %>
+
+    <div class="container mx-auto px-6 py-10">
+        <a href="/api/auction" class="text-gray-400 hover:text-blue-400 mb-6 inline-block transition">
+            ← Back to Auctions
+        </a>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            
+            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden h-96 flex items-center justify-center p-4 border border-gray-700">
+                <% if(auction.image) { %>
+                    <img src="/uploads/<%= auction.image %>" 
+                         onerror="this.src='https://via.placeholder.com/400?text=No+Image'"
+                         class="max-h-full max-w-full object-contain hover:scale-105 transition duration-300">
+                <% } else { %>
+                    <span class="text-gray-500 text-lg">No Image Available</span>
+                <% } %>
+            </div>
+
+            <div>
+                <h1 class="text-4xl font-bold mb-2 text-white"><%= auction.title %></h1>
+                <p class="text-gray-400 text-sm mb-6">Posted on <%= new Date(auction.createdAt).toLocaleDateString() %></p>
+                
+                <div class="bg-gray-800 p-6 rounded-lg mb-8 border border-gray-700">
+                    <h3 class="font-bold text-lg mb-2 text-blue-400">Description</h3>
+                    <p class="text-gray-300 leading-relaxed"><%= auction.description %></p>
+                </div>
+
+                <div class="bg-gray-800 p-8 rounded-lg shadow-xl border-2 border-yellow-500 relative overflow-hidden mb-8">
+                    <div class="absolute top-0 right-0 bg-yellow-500 text-black font-bold px-3 py-1 text-xs rounded-bl-lg uppercase tracking-wider">
+                        Live Auction
+                    </div>
+
+                    <% 
+                       const now = new Date();
+                       const start = new Date(auction.startTime);
+                       const end = new Date(auction.endTime);
+                    %>
+
+                    <div class="flex justify-between items-center mb-8 border-b border-gray-700 pb-6">
+                        <div>
+                            <p class="text-sm text-gray-400 uppercase tracking-wide">Current Highest Bid</p>
+                            <p id="price-display" class="text-5xl font-extrabold text-green-400 mt-1">৳<%= auction.currentPrice %></p>
+                        </div>
+                        <div class="text-right">
+                            <% if (now < start) { %>
+                                <p class="text-sm text-gray-400">Starts In</p>
+                                <p class="text-xl font-bold text-blue-400"><%= start.toLocaleString() %></p>
+                            <% } else if (now > end) { %>
+                                <p class="text-sm text-gray-400">Status</p>
+                                <p class="text-xl font-bold text-red-500">Ended</p>
+                            <% } else { %>
+                                <p class="text-sm text-gray-400">Ends In</p>
+                                <p class="text-xl font-bold text-red-500"><%= end.toLocaleDateString() %></p>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <% if (now < start) { %>
+                        
+                        <div class="bg-blue-900/50 text-blue-200 p-4 rounded-lg text-center font-bold border border-blue-500/30">
+                            ⏳ Auction Starts Soon
+                        </div>
+
+                    <% } else if (now > end) { %>
+                        
+                        <div class="bg-red-900/50 text-red-200 p-4 rounded-lg text-center font-bold border border-red-500/30">
+                            🚫 Auction Ended
+                        </div>
+
+                    <% } else { %>
+                        
+                        <form id="bid-form" class="space-y-4">
+                            <div>
+                                <label class="text-sm font-bold text-gray-300 ml-1">Your Bid Amount</label>
+                                <input type="number" id="bid-amount" 
+                                       class="w-full p-4 mt-1 bg-gray-900 border-2 border-gray-600 rounded-lg text-xl text-white focus:border-yellow-500 focus:outline-none transition" 
+                                       placeholder="Enter amount (min <%= auction.currentPrice + 1 %>)" required>
+                            </div>
+                            <button type="submit" 
+                                    class="w-full bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-extrabold py-4 rounded-lg text-xl transition transform active:scale-95 shadow-lg">
+                                Place Bid 🔨
+                            </button>
+                            <p id="bid-message" class="text-center font-bold text-sm mt-2 min-h-[20px]"></p>
+                        </form>
+
+                    <% } %>
+
+                </div>
+
+                <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden">
+                    <div class="bg-gray-700 p-3 font-bold text-gray-200 flex justify-between items-center">
+                        <span>📊 Live Bid History</span>
+                        <span class="text-xs bg-green-600 text-white px-2 py-1 rounded animate-pulse">Live</span>
+                    </div>
+                    
+                    <ul id="bid-history-list" class="divide-y divide-gray-700 max-h-60 overflow-y-auto">
+                        <% if(auction.Bids && auction.Bids.length > 0) { %>
+                            <% auction.Bids.forEach(bid => { %>
+                                <li class="p-3 flex justify-between items-center hover:bg-gray-750 transition">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-blue-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs">
+                                            <%= bid.User ? bid.User.name.charAt(0).toUpperCase() : 'U' %>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-sm"><%= bid.User ? bid.User.name : 'Unknown' %></p>
+                                            <p class="text-xs text-gray-500"><%= new Date(bid.createdAt).toLocaleTimeString() %></p>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold text-green-400">৳<%= bid.amount %></span>
+                                </li>
+                            <% }) %>
+                        <% } else { %>
+                            <li id="no-bids-msg" class="p-4 text-center text-gray-500 text-sm italic">No bids yet. Be the first!</li>
+                        <% } %>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const auctionId = "<%= auction.id %>";
+        const currentPriceElem = document.getElementById('price-display');
+        const form = document.getElementById('bid-form');
+        const message = document.getElementById('bid-message');
+        const historyList = document.getElementById('bid-history-list');
+        const noBidsMsg = document.getElementById('no-bids-msg');
+
+        socket.emit("join-auction", auctionId);
+
+        // FORM SUBMIT HANDLER
+        if(form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const amount = document.getElementById('bid-amount').value;
+                message.innerText = "Placing bid...";
+                message.className = "text-center font-bold text-sm mt-2 text-blue-400";
+
+                try {
+                    const res = await fetch(`/api/auction/bid/${auctionId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ amount })
+                    });
+                    
+                    if (res.redirected || res.url.includes('/login')) {
+                        window.location.href = "/login?error=Please login to bid";
+                        return;
+                    }
+                    const data = await res.json();
+                    if (res.ok) {
+                        message.innerText = "✅ Success!";
+                        message.className = "text-center font-bold text-sm mt-2 text-green-400";
+                        document.getElementById('bid-amount').value = "";
+                    } else {
+                        message.innerText = "❌ " + data.message;
+                        message.className = "text-center font-bold text-sm mt-2 text-red-500";
+                    }
+                } catch (err) { console.error(err); }
+            });
+        }
+
+        // --- REAL-TIME UPDATES ---
+        socket.on("bid-updated", (data) => {
+            console.log("New Bid:", data);
+
+            // 1. Update Big Price
+            currentPriceElem.innerText = "৳" + data.price;
+            currentPriceElem.style.transform = "scale(1.1)";
+            currentPriceElem.style.color = "#4ade80"; 
+            setTimeout(() => {
+                currentPriceElem.style.transform = "scale(1)";
+                currentPriceElem.style.color = "#4ade80";
+            }, 300);
+
+            // 2. Update Input Placeholder
+            const input = document.getElementById('bid-amount');
+            if(input) input.placeholder = `Enter amount (min ${data.price + 1})`;
+
+            // 3. ADD TO HISTORY LIST
+            if(noBidsMsg) noBidsMsg.remove(); // Remove "No bids yet" text
+
+            const newLi = document.createElement("li");
+            newLi.className = "p-3 flex justify-between items-center bg-gray-700 animate-pulse transition border-b border-gray-600";
+            newLi.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs">
+                        ${data.user.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <p class="font-bold text-sm text-white">${data.user}</p>
+                        <p class="text-xs text-gray-400">Just now</p>
+                    </div>
+                </div>
+                <span class="font-bold text-green-400">৳${data.price}</span>
+            `;
+
+            historyList.prepend(newLi);
+
+            setTimeout(() => {
+                newLi.classList.remove("bg-gray-700", "animate-pulse");
+                newLi.classList.add("hover:bg-gray-750");
+            }, 1000);
+        });
+    </script>
+
+</body>
+</html>

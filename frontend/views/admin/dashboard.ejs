@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - AuctionHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+
+    <nav class="bg-red-900 border-b border-red-700 p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🛡️</span>
+                <span class="text-xl font-bold tracking-wide">Admin Control Panel</span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <span class="text-red-200 text-sm">Logged in as <%= user.name %></span>
+                <a href="/api/auth/logout" class="bg-gray-800 border border-gray-600 px-4 py-2 rounded hover:bg-gray-700 text-sm font-bold transition">
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-10">
+        <h1 class="text-3xl font-bold mb-8">System Overview</h1>
+
+        <div class="bg-gray-800 rounded-lg shadow-lg border-2 border-yellow-600 mb-12 overflow-hidden">
+            <div class="bg-yellow-600 text-black p-4 font-bold flex justify-between items-center">
+                <span class="flex items-center gap-2">
+                    ⚠️ Pending Approvals 
+                    <span class="bg-black text-white text-xs px-2 py-1 rounded-full"><%= pending.length %></span>
+                </span>
+                <span class="text-xs font-bold uppercase tracking-wider">Action Required</span>
+            </div>
+            
+            <div class="p-4">
+                <% if(pending.length === 0) { %>
+                    <div class="text-center py-8 text-gray-500">
+                        <p class="text-xl">✅ All caught up!</p>
+                        <p class="text-sm">No pending items to review.</p>
+                    </div>
+                <% } else { %>
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-700 text-gray-300 text-xs uppercase">
+                            <tr>
+                                <th class="p-3">Item Name</th>
+                                <th class="p-3">Seller</th>
+                                <th class="p-3">Price</th>
+                                <th class="p-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700">
+                            <% pending.forEach(item => { %>
+                                <tr class="hover:bg-gray-700 transition">
+                                    <td class="p-3 font-bold text-white"><%= item.title %></td>
+                                    <td class="p-3 text-sm text-gray-400"><%= item.User ? item.User.name : 'Unknown' %></td>
+                                    <td class="p-3 text-green-400 font-mono">৳<%= item.startPrice %></td>
+                                    <td class="p-3 flex justify-end gap-3">
+                                        <form action="/api/admin/approve/<%= item.id %>" method="POST">
+                                            <button class="bg-green-600 hover:bg-green-500 text-white px-4 py-1 rounded shadow text-sm font-bold transition">
+                                                ✔ Approve
+                                            </button>
+                                        </form>
+                                        <form action="/api/admin/reject/<%= item.id %>" method="POST" onsubmit="return confirm('Reject and Delete this item permanently?');">
+                                            <button class="bg-red-600 hover:bg-red-500 text-white px-4 py-1 rounded shadow text-sm font-bold transition">
+                                                ✕ Reject
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </div>
+        </div>
+
+        <% 
+            const now = new Date();
+            const liveAuctions = active.filter(item => new Date(item.endTime) > now);
+            const historyAuctions = active.filter(item => new Date(item.endTime) <= now);
+        %>
+
+        <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden mb-12">
+            <div class="bg-gray-700 p-4 font-bold flex justify-between">
+                <span>🟢 Live Active Auctions</span>
+                <span class="text-gray-400 text-sm"><%= liveAuctions.length %> items live</span>
+            </div>
+            
+            <div class="p-4 max-h-96 overflow-y-auto">
+                <% if(liveAuctions.length === 0) { %>
+                    <p class="text-gray-500 italic text-center py-4">No active auctions running.</p>
+                <% } else { %>
+                    <ul class="space-y-3">
+                        <% liveAuctions.forEach(item => { %>
+                            <li class="flex justify-between items-center bg-gray-900 p-3 rounded border border-gray-700 hover:border-gray-500 transition">
+                                <div>
+                                    <p class="font-bold text-lg"><%= item.title %></p>
+                                    <div class="flex gap-4 text-xs text-gray-400">
+                                        <span>Seller: <%= item.User ? item.User.name : 'Unknown' %></span>
+                                        <span>Current: <b class="text-green-400">৳<%= item.currentPrice %></b></span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <a href="/api/auction/<%= item.id %>" class="text-blue-400 hover:text-blue-300 text-sm font-bold hover:underline">View Page</a>
+                                    <form action="/api/admin/end-early/<%= item.id %>" method="POST" onsubmit="return confirm('⚠️ Stop bidding immediately?');">
+                                        <button type="submit" class="bg-red-900/80 text-red-200 text-xs px-3 py-2 rounded border border-red-700 hover:bg-red-600 hover:text-white transition flex items-center gap-1">
+                                            🛑 Stop Auction
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        <% }) %>
+                    </ul>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden">
+            <div class="bg-gray-700 p-4 font-bold flex justify-between items-center">
+                <span>📜 Auction History (Ended)</span>
+                <span class="text-xs bg-gray-600 px-2 py-1 rounded text-gray-300"><%= historyAuctions.length %> Archived</span>
+            </div>
+            
+            <div class="p-4">
+                <% if(historyAuctions.length === 0) { %>
+                    <p class="text-gray-500 italic text-center py-4">No auction history yet.</p>
+                <% } else { %>
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-900 text-gray-400 text-xs uppercase">
+                            <tr>
+                                <th class="p-3">Item Name</th>
+                                <th class="p-3">Seller</th>
+                                <th class="p-3">Final Price</th>
+                                <th class="p-3 text-right">Ended On</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700">
+                            <% historyAuctions.forEach(item => { %>
+                                <tr class="hover:bg-gray-750 opacity-70 hover:opacity-100 transition">
+                                    <td class="p-3">
+                                        <p class="font-bold text-gray-300"><%= item.title %></p>
+                                    </td>
+                                    <td class="p-3 text-sm text-gray-500"><%= item.User ? item.User.name : 'Unknown' %></td>
+                                    <td class="p-3 font-bold text-green-500">৳<%= item.currentPrice %></td>
+                                    <td class="p-3 text-right text-xs text-gray-500">
+                                        <%= new Date(item.endTime).toLocaleString() %>
+                                        <span class="block text-red-400 text-[10px] uppercase font-bold mt-1">Ended</span>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

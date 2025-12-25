@@ -1,0 +1,27 @@
+<%- include("../partials/header", { title: "Live Action" }) %>
+
+<h2 class="text-3xl font-bold mb-4">Live Auction</h2>
+
+<video id="remoteVideo" autoplay playsinline class="w-full rounded shadow"></video>
+
+<div class="mt-4">
+  <h3 class="text-xl font-bold">Live Chat</h3>
+  <div id="chatBox" class="h-48 p-3 bg-gray-200 dark:bg-gray-700 rounded overflow-y-scroll"></div>
+
+  <input id="chatInput" class="w-full p-3 mt-2 rounded bg-gray-200 dark:bg-gray-700"
+    placeholder="Write message...">
+
+  <button id="sendChat"
+    class="bg-blue-600 text-white px-4 py-2 rounded mt-2">
+    Send
+  </button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/live-watch.js"></script>
+
+<script>
+  const auctionId = "<%= auctionId %>";
+</script>
+
+<%- include("../partials/footer") %>

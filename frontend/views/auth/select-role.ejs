@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Portal - AuctionHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white h-screen flex items-center justify-center font-sans">
+
+    <div class="text-center space-y-8">
+        <h1 class="text-4xl font-bold mb-8">Welcome to AuctionHub</h1>
+        <p class="text-gray-400 text-lg">Please select your portal to continue</p>
+
+        <div class="flex flex-col md:flex-row gap-8 justify-center mt-8">
+            
+            <a href="/login?type=user" class="group block w-64 bg-gray-800 p-8 rounded-xl border-2 border-gray-700 hover:border-blue-500 hover:bg-gray-750 transition transform hover:-translate-y-2">
+                <div class="text-6xl mb-4">👤</div>
+                <h3 class="text-2xl font-bold text-blue-500 group-hover:text-blue-400">User Portal</h3>
+                <p class="text-gray-500 mt-2 text-sm">Bid, Buy, and Browse Auctions</p>
+            </a>
+
+            <a href="/login?type=admin" class="group block w-64 bg-gray-800 p-8 rounded-xl border-2 border-gray-700 hover:border-red-500 hover:bg-gray-750 transition transform hover:-translate-y-2">
+                <div class="text-6xl mb-4">🛡️</div>
+                <h3 class="text-2xl font-bold text-red-500 group-hover:text-red-400">Admin Portal</h3>
+                <p class="text-gray-500 mt-2 text-sm">Manage Users, Auctions & Approvals</p>
+            </a>
+
+        </div>
+    </div>
+
+</body>
+</html>

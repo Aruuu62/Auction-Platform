@@ -1,0 +1,19 @@
+<%- include("../partials/header", { title: "Start Live Action" }) %>
+
+<h2 class="text-3xl font-bold mb-4">Live Auction Broadcast</h2>
+
+<video id="localVideo" autoplay muted playsinline class="w-full rounded shadow"></video>
+
+<button id="startBtn"
+  class="bg-green-600 text-white px-4 py-2 rounded mt-4">
+  Start Live Stream
+</button>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/live-broadcast.js"></script>
+
+<script>
+  const auctionId = "<%= auctionId %>";
+</script>
+
+<%- include("../partials/footer") %>

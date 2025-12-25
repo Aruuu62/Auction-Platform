@@ -1,0 +1,39 @@
+<%- include("../partials/header", { title: "KYC Verification" }) %>
+
+<div class="max-w-2xl mx-auto mt-10">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Verify Your Identity (KYC)</h2>
+        
+        <p class="mb-6 text-gray-600 dark:text-gray-300">
+            To participate in auctions and withdraw funds, we need to verify your government-issued ID.
+        </p>
+
+        <form action="/api/auth/kyc" method="POST" enctype="multipart/form-data" class="space-y-6">
+            
+            <div>
+                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-300">National ID Number</label>
+                <input type="text" name="nationalId" required 
+                    class="w-full p-3 rounded border dark:border-gray-600 bg-gray-50 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-300">Upload ID Document (Image)</label>
+                <div class="flex items-center justify-center w-full">
+                    <label class="flex flex-col w-full h-32 border-4 border-dashed hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600 cursor-pointer">
+                        <div class="flex flex-col items-center justify-center pt-7">
+                            <svg class="w-8 h-8 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">Select a file</p>
+                        </div>
+                        <input type="file" name="document" class="opacity-0" required />
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded transition duration-200">
+                Submit for Verification
+            </button>
+        </form>
+    </div>
+</div>
+
+<%- include("../partials/footer") %>
