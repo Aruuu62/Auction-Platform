@@ -41,3 +41,59 @@
 ```bash
 git clone [https://github.com/your-username/auction-hub.git](https://github.com/your-username/auction-hub.git)
 cd auction-hub
+
+
+### 2. Install Dependencies
+
+npm install
+
+
+### 3. Configure Environment
+Create a file named backend/config/config.env (or .env in the root) and add the following:
+
+# Code snippet
+
+PORT=5000
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=your_mysql_password
+DB_NAME=auction_db
+JWT_SECRET=your_super_secret_key
+
+### 4. Database Setup
+Ensure MySQL is running. The application uses Sequelize, so it will automatically create the necessary tables (Users, Auctions, Bids) upon the first launch.
+
+
+### 5. Run the Server
+Bash
+
+# Production mode
+npm start
+
+# Development mode (auto-restart)
+npm run dev
+Open your browser and visit: http://localhost:5000
+
+
+## 🔑 Accounts & Roles
+Creating an Admin Account
+To register as an Admin, navigate to the registration page (/register) and select Admin. You will be asked for a Secret Key.
+
+Default Secret Key: (You can change this in backend/controllers/authController.js)
+
+Standard User
+Simply register normally to access the User Dashboard.
+
+
+## 📂 Project Structure
+├── backend/
+│   ├── config/          # DB connection & Env variables
+│   ├── controllers/     # Logic (Auth, Auctions, User, Admin)
+│   ├── middleware/      # Protection (Auth check, Admin check)
+│   ├── models/          # Database Schemas (Sequelize)
+│   ├── routes/          # API Routes
+│   └── server.js        # Main entry point
+├── frontend/
+│   ├── public/          # Static assets (CSS, Uploads)
+│   └── views/           # EJS Templates (UI)
+└── README.md
